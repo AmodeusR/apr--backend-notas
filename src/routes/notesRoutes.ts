@@ -1,0 +1,90 @@
+import type { FastifyInstance } from "fastify";
+import { db } from "@lib/prisma";
+import type { Params } from "@typings/notes";
+import { NoteSchema } from "schemas";
+import { parseZodError } from "utils/parseZodError";
+import { PrismaClientKnownRequestError } from "generated/prisma/runtime/library";
+
+
+export async function notesRoutes(fastify: FastifyInstance) {
+  // Get notes
+  fastify.get("/notes", async () => {
+    const notes = await db.note.findMany();
+    
+    return {
+      notes
+    }
+  });
+
+  // Get one note
+  fastify.get<{Params: Params}>("/notes/:id", async (req, reply) => {
+    const { id } = req.params;
+    const note = await db.note.findUnique({ where: {
+      id
+    }});
+
+    if (note === null) {
+      return reply.status(404).send({ message: "Note not found"});
+    }
+
+    return {
+      note
+    }
+  });
+
+  // Create a note
+  fastify.post("/notes", async (req, reply) => {
+    const noteBody = req.body;
+    const { success, data, error } = NoteSchema.safeParse(noteBody);
+
+    if (!success) {
+      const { field, description } = parseZodError(error.issues);
+      
+      return reply.status(400).send({ message: `error on field ${field}: ${description}`});
+    }
+
+    const dbNote = await db.note.create({ data });
+    
+    return reply.status(201).send({ dbNote });
+  });
+
+  fastify.put<{ Params: Params}>("/notes/:id", async (req, reply) => {
+    const { id } = req.params;
+    const body = req.body;
+    const NoteSchemaPartial = NoteSchema.partial()
+    const data = NoteSchemaPartial.parse(body);
+
+    try {
+      await db.note.update({ where: { id }, data });
+      
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === "P2025") {
+          return reply.status(404).send({ message: "Note doesn't exist."});
+        }
+      }
+    }
+
+    return reply.status(200).send();
+  })
+
+  // Delete a note
+  fastify.delete<{ Params: Params}>("/notes/:id", async (req, reply) => {
+    const { id } = req.params;
+
+    try {
+      await db.note.delete({ where: { id }});
+      
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === "P2025") {
+          return reply.status(404).send({ message: "note doesn't exist."})
+        }
+      }
+
+      return reply.status(500).send();
+    }
+
+    return reply.status(204).send();
+  });
+}
