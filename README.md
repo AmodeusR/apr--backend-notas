@@ -1,5 +1,7 @@
 # apr--backend-notas
 
+A simple exercise to practice NodeJS and backend api creation.
+
 To install dependencies:
 
 ```bash
@@ -12,4 +14,3 @@ To run:
 bun run ./src/index.ts
 ```
 
-This project was created using `bun init` in bun v1.1.45. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
