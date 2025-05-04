@@ -7,7 +7,7 @@ const fastify = Fastify({
 
 fastify.register(notesRoutes);
 
-fastify.get("/", (req, rep) => {
+fastify.get("/", () => {
   return {
     message: "Go to /notes route to utilize this api!"
   }
