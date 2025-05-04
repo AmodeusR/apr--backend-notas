@@ -1,5 +1,5 @@
 # Run seed command to pre-populate the db
-preload=["./prisma/seed.ts"]
+# preload=["./prisma/seed.ts"]
 
 # I don't think this is really necessary, but just in case...
 [paths]
