@@ -1,12 +1,15 @@
 import Fastify from "fastify";
+import { notesRoutes } from "@routes/notesRoutes";
 
 const fastify = Fastify({
   logger: true
 });
 
+fastify.register(notesRoutes);
+
 fastify.get("/", (req, rep) => {
   return {
-    message: "It's working!"
+    message: "Go to /notes route to utilize this api!"
   }
 });
 
