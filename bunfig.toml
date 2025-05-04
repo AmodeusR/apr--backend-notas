@@ -1,0 +1,8 @@
+# Run seed command to pre-populate the db
+preload=["./prisma/seed.ts"]
+
+# I don't think this is really necessary, but just in case...
+[paths]
+"@typings/*" = "./src/typings/*"
+"@lib/*" = "./src/lib/*"
+"@routes/*" = "./src/routes/*"
