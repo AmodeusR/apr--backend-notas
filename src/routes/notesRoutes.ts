@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { db } from "@lib/prisma";
 import type { Params } from "@typings/notes";
 import { NoteSchema } from "schemas";
-import { parseZodError } from "utils/parseZodError";
+import { parseZodIssues } from "utils/parseZodIssues";
 import { PrismaClientKnownRequestError } from "generated/prisma/runtime/library";
 
 
@@ -38,9 +38,9 @@ export async function notesRoutes(fastify: FastifyInstance) {
     const { success, data, error } = NoteSchema.safeParse(noteBody);
 
     if (!success) {
-      const { field, description } = parseZodError(error.issues);
+      const { message } = parseZodIssues(error.issues);
       
-      return reply.status(400).send({ message: `error on field ${field}: ${description}`});
+      return reply.status(400).send({ message });
     }
 
     const dbNote = await db.note.create({ data });
@@ -52,7 +52,13 @@ export async function notesRoutes(fastify: FastifyInstance) {
     const { id } = req.params;
     const body = req.body;
     const NoteSchemaPartial = NoteSchema.partial()
-    const data = NoteSchemaPartial.parse(body);
+    const { success, data, error } = NoteSchemaPartial.safeParse(body);
+
+    if (!success) {
+      const { message } = parseZodIssues(error.issues);
+
+      return reply.status(400).send({ message });
+    }
 
     try {
       await db.note.update({ where: { id }, data });
