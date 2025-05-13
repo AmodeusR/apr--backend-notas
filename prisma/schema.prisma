@@ -4,7 +4,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
-  runtime = "bun"
+  runtime  = "bun"
 }
 
 datasource db {
@@ -16,7 +16,20 @@ model Note {
   id          String    @id @default(cuid())
   description String
   due         DateTime?
-  expired     Boolean
+  finished    Boolean   @default(false)
+  expired     Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String
+  password  String
+  email     String   @unique
+  notes     Note[]
+  createdAt DateTime @default(now())
 }
