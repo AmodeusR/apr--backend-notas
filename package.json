@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch ./src/index.ts",
-    "seed": "bun run ./prisma/seed.ts"
+    "seed": "bun run ./prisma/seed.ts",
+    "biome:check": "biome check ./src",
+    "biome:fix": "biome check ./src --write"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/bun": "latest"
   },
   "peerDependencies": {
