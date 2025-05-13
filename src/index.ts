@@ -1,10 +1,12 @@
 import Fastify from "fastify";
 import { notesRoutes } from "@routes/notesRoutes";
+import { authRoutes } from "@routes/authRoutes";
 
 const fastify = Fastify({
   logger: true
 });
 
+fastify.register(authRoutes, { prefix: "auth/"});
 fastify.register(notesRoutes);
 
 fastify.get("/", () => {
