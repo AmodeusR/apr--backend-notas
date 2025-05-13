@@ -1,2 +1,1 @@
 export { NoteSchema } from "./notesSchemas";
-
