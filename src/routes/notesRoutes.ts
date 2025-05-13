@@ -1,12 +1,11 @@
-import type { FastifyInstance } from "fastify";
 import { db } from "@lib/prisma";
-import type { Params } from "@typings/notes";
 import { NoteSchema } from "schemas";
 import { parseZodIssues } from "utils/parseZodIssues";
-import { PrismaClientKnownRequestError } from "generated/prisma/runtime/library";
+import { PrismaClientKnownRequestError } from "generated/prisma/internal/prismaNamespace";
+import type { FastifyInstance } from "fastify";
+import type { Params } from "@typings/notes";
 
-
-export async function notesRoutes(fastify: FastifyInstance) {
+export function notesRoutes(fastify: FastifyInstance) {
   // Get notes
   fastify.get("/notes", async () => {
     const notes = await db.note.findMany();
@@ -35,6 +34,7 @@ export async function notesRoutes(fastify: FastifyInstance) {
   // Create a note
   fastify.post("/notes", async (req, reply) => {
     const noteBody = req.body;
+
     const { success, data, error } = NoteSchema.safeParse(noteBody);
 
     if (!success) {
@@ -42,8 +42,8 @@ export async function notesRoutes(fastify: FastifyInstance) {
       
       return reply.status(400).send({ message });
     }
-
-    const dbNote = await db.note.create({ data });
+    
+    const dbNote = await db.note.create({ data: {...data, userId: "cmammb07d0000qab8adr642rg" } });
     
     return reply.status(201).send({ dbNote });
   });
@@ -69,6 +69,8 @@ export async function notesRoutes(fastify: FastifyInstance) {
           return reply.status(404).send({ message: "Note doesn't exist."});
         }
       }
+
+      return reply.status(500).send();
     }
 
     return reply.status(200).send();
