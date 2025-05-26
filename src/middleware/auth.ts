@@ -11,12 +11,11 @@ export async function validateJWT(req: FastifyRequest, reply: FastifyReply) {
 			.send({ message: " Unauthorized (no token found)" });
 
 	const token = authHeader.replace("Bearer ", "");
-	
+
 	try {
 		// biome-ignore lint: the environment variable exists
 		const decoded = jwt.verify(token, Bun.env.JWT_SECRET!) as JwtPayload;
 		req.user = decoded;
-		
 	} catch {
 		return reply.status(401).send({ message: "The login token has expired" });
 	}

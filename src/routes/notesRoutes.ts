@@ -14,9 +14,11 @@ export function notesRoutes(fastify: FastifyInstance) {
 	fastify.get("/notes", async (req) => {
 		const user = req.user;
 
-		const notes = await db.note.findMany({ where: {
-			userId: user.userId
-		}});
+		const notes = await db.note.findMany({
+			where: {
+				userId: user.userId,
+			},
+		});
 
 		return {
 			notes,
