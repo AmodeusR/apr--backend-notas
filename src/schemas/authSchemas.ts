@@ -14,6 +14,7 @@ const userMessages = {
 	},
 };
 
+
 export const UserRegistrationSchema = z.interface({
 	username: z
 		.string()
@@ -30,3 +31,8 @@ export const UserRegistrationSchema = z.interface({
 			userMessages.password.symbol,
 		),
 });
+
+export const UserLoginSchema = z.interface({
+	email: z.email(),
+	password: z.string()
+})
