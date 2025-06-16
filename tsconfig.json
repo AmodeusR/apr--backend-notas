@@ -30,6 +30,8 @@
       "@typings/*": ["typings/*"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   }
 }
